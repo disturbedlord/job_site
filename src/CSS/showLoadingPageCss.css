@@ -1,0 +1,10 @@
+.fadeInFadeOutElement {
+  opacity: 0;
+  animation: fadeinout 1s infinite;
+}
+
+@keyframes fadeinout {
+  50% {
+    opacity: 1;
+  }
+}
