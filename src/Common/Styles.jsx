@@ -23,6 +23,18 @@ const commonStyle = {
     marginRight: "10px",
     marginTop: "10px",
   },
+  errorTag: {
+    backgroundColor: "rgba(255,0,0,0.2)",
+    color: "rgba(255,0,0,0.6)",
+    fontSize: "0.6rem",
+    fontWeight: "bold",
+    display: "table",
+    paddingLeft: "5px",
+    paddingRight: "5px",
+    paddingTop: "1px",
+    paddingBottom: "1px",
+    borderRadius: "2px",
+  },
 };
 
 export default commonStyle;

@@ -15,7 +15,10 @@ import {
   Link,
   useLocation,
 } from "react-router-dom";
-const request = require("request");
+import { getUser } from "../../actions/loggedInUserAction";
+import { connect } from "react-redux";
+import Http from "../../Common/HttpCalls";
+import Constants from "../../Common/Constants";
 
 class DesktopSearchBar extends React.Component {
   render() {
@@ -377,21 +380,18 @@ class JobsSection extends React.Component {
   };
 
   componentDidMount(props) {
-    var options = {
-      method: "GET",
-      url: "http://localhost:3500/jobs/alljobs",
-      headers: {
-        "auth-token": this.props.authToken,
-      },
-    };
-    request(options, (error, response) => {
-      if (error) throw new Error(error);
-      const data = JSON.parse(response.body);
-      this.setState({
-        jobData: data.data,
-      });
-      console.log(this.state.jobData);
-    });
+    this.props.getUser();
+    const authToken = this.props.loggedInUser.authToken;
+    if (authToken !== undefined || authToken !== "") {
+      Http.GET(Constants.URLS.AllJobs, { "auth-token": authToken })
+        .then((res) => {
+          const jobs = res.data;
+          this.setState({
+            jobData: jobs.data,
+          });
+        })
+        .catch((err) => console.log(err));
+    }
   }
   render() {
     return (
@@ -507,4 +507,8 @@ const styles = {
   },
 };
 
-export default JobsSection;
+const mapStateToProps = (state) => ({
+  loggedInUser: state.loggedInUser.loggedInUser,
+});
+
+export default connect(mapStateToProps, { getUser })(JobsSection);

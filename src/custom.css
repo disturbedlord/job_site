@@ -39,6 +39,10 @@ input {
   outline: none;
 }
 
+.form-group {
+  margin-bottom: 0.5rem;
+}
+
 textarea:hover,
 input:hover,
 textarea:active,
@@ -53,4 +57,10 @@ label:focus,
 .btn.active {
   outline: 0px !important;
   box-shadow: none !important;
+}
+
+#input:focus {
+  outline: none !important;
+  border: 2px solid rgb(78, 9, 134);
+  box-shadow: 0 0 10px #a3ce71;
 }

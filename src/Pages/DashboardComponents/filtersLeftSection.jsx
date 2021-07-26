@@ -76,9 +76,9 @@ class FiltersLeftSection extends React.Component {
         <div>
           <div>
             <p style={{ fontSize: "0.85rem", fontWeight: "bold" }}>Category</p>
-            {jobTypes.map((jobType) => {
+            {jobTypes.map((jobType, id) => {
               return (
-                <div class="form-check" style={styles.jobCategories}>
+                <div key={id} class="form-check" style={styles.jobCategories}>
                   <input
                     className="form-check-input"
                     type="checkbox"

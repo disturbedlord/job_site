@@ -9,6 +9,8 @@ import clock from "../assets/clock.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
 import "../CSS/dashboardCss.css";
+import { connect } from "react-redux";
+import { getUser } from "../actions/loggedInUserAction";
 import {
   Image,
   Row,
@@ -29,7 +31,9 @@ import FiltersLeftSection from "./DashboardComponents/filtersLeftSection";
 import JobsSection from "./DashboardComponents/JobsSection";
 import FiltersRightSection from "./DashboardComponents/filtersRightSection";
 import NavBar from "../components/NavBar";
-const request = require("request");
+import { Link } from "react-router-dom";
+import Http from "../Common/HttpCalls";
+import Constants from "../Common/Constants";
 
 class DashBoardPage extends React.Component {
   constructor(props) {
@@ -45,34 +49,20 @@ class DashBoardPage extends React.Component {
   }
 
   componentDidMount(props) {
-    console.log(this.props.location);
-    if (
-      this.props.location.state !== undefined &&
-      this.props.location.state.userData !== undefined
-    ) {
-      const authToken = this.props.location.state.authToken;
-      const userData = this.props.location.state.userData;
-      this.setState({
-        authToken: authToken,
-        userData: userData,
-      });
-      console.log(userData);
-      var options = {
-        method: "GET",
-        url: "http://localhost:3500/dashboard",
-        headers: {
-          "auth-token": authToken,
-        },
-      };
-      request(options, (error, response) => {
-        if (error) throw new Error(error);
-        const data = JSON.parse(response.body);
-        if (data !== undefined && data.status === 1) {
-          this.setState({ authorized: true, serverCallFinished: true });
-        } else {
-          this.setState({ authorized: false, serverCallFinished: true });
-        }
-      });
+    this.props.getUser();
+    const authToken = this.props.loggedInUser.authToken;
+    console.log(authToken);
+    if (authToken !== undefined || authToken !== "") {
+      Http.GET(Constants.URLS.Dashboard, { "auth-token": authToken })
+        .then((res) => {
+          const data = res.data;
+          if (data !== undefined && data.status === 1) {
+            this.setState({ authorized: true, serverCallFinished: true });
+          } else {
+            this.setState({ authorized: false, serverCallFinished: true });
+          }
+        })
+        .catch((err) => console.log(err));
     } else {
       this.setState({ authorized: false, serverCallFinished: true });
     }
@@ -117,7 +107,12 @@ class DashBoardPage extends React.Component {
                 </div>
               </div>
             ) : (
-              <div>Unauthorized</div>
+              <div>
+                Unauthorized
+                <div>
+                  <Link to="/login">Login</Link>
+                </div>
+              </div>
             )}
           </div>
         ) : (
@@ -201,4 +196,8 @@ const styles = {
   },
 };
 
-export default DashBoardPage;
+const mapStateToProps = (state) => ({
+  loggedInUser: state.loggedInUser.loggedInUser,
+});
+
+export default connect(mapStateToProps, { getUser })(DashBoardPage);

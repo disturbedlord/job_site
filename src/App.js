@@ -16,6 +16,8 @@ import {
 } from "react-router-dom";
 import { Form } from "react-bootstrap";
 import JobDetails from "./Pages/JobDetails";
+import store from "./Store";
+import { Provider } from "react-redux";
 
 class CreateAccountHelper extends React.Component {
   constructor(props) {
@@ -93,97 +95,99 @@ class App extends React.Component {
 
   render() {
     return (
-      <Router>
-        <div>
-          <Switch>
-            <Route exact path="/">
-              <div>
-                <div
-                  style={{
-                    ...styles.logoFull,
-                    paddingTop: "0.5rem",
-                    paddingLeft: "1rem",
-                  }}
-                >
-                  <p
+      <Provider store={store}>
+        <Router>
+          <div>
+            <Switch>
+              <Route exact path="/">
+                <div>
+                  <div
                     style={{
-                      fontSize: "1rem",
-                      fontWeight: "600",
+                      ...styles.logoFull,
+                      paddingTop: "0.5rem",
+                      paddingLeft: "1rem",
                     }}
                   >
-                    Valley
-                  </p>
+                    <p
+                      style={{
+                        fontSize: "1rem",
+                        fontWeight: "600",
+                      }}
+                    >
+                      Valley
+                    </p>
+                  </div>
+                  <div style={styles.container}>
+                    <LoginPage />
+                    <CreateAccountHelper />
+                  </div>
                 </div>
-                <div style={styles.container}>
-                  <LoginPage />
-                  <CreateAccountHelper />
-                </div>
-              </div>
-            </Route>
-            <Route path="/login">
-              <div>
-                <div
-                  style={{
-                    ...styles.logoFull,
-                    paddingTop: "0.5rem",
-                    paddingLeft: "1rem",
-                  }}
-                >
-                  <p
+              </Route>
+              <Route path="/login">
+                <div>
+                  <div
                     style={{
-                      fontSize: "1rem",
-                      fontWeight: "600",
+                      ...styles.logoFull,
+                      paddingTop: "0.5rem",
+                      paddingLeft: "1rem",
                     }}
                   >
-                    Valley
-                  </p>
+                    <p
+                      style={{
+                        fontSize: "1rem",
+                        fontWeight: "600",
+                      }}
+                    >
+                      Valley
+                    </p>
+                  </div>
+                  <div style={styles.container}>
+                    <LoginPage />
+                    <CreateAccountHelper />
+                  </div>
                 </div>
-                <div style={styles.container}>
-                  <LoginPage />
-                  <CreateAccountHelper />
-                </div>
-              </div>
-            </Route>
-            <Route path="/register">
-              <div>
-                <div
-                  style={{
-                    ...styles.logoFull,
-                    paddingTop: "0.5rem",
-                    paddingLeft: "1rem",
-                  }}
-                >
-                  <p
+              </Route>
+              <Route path="/register">
+                <div>
+                  <div
                     style={{
-                      fontSize: "1rem",
-                      fontWeight: "600",
+                      ...styles.logoFull,
+                      paddingTop: "0.5rem",
+                      paddingLeft: "1rem",
                     }}
                   >
-                    Valley
-                  </p>
-                </div>
+                    <p
+                      style={{
+                        fontSize: "1rem",
+                        fontWeight: "600",
+                      }}
+                    >
+                      Valley
+                    </p>
+                  </div>
 
-                <div style={styles.container}>
-                  <RegisterPage />
-                  <LoginToAccountHelper />
+                  <div style={styles.container}>
+                    <RegisterPage />
+                    <LoginToAccountHelper />
+                  </div>
                 </div>
-              </div>
-            </Route>
-            <Route
-              path="/dashboard"
-              render={(props) => <DashBoardPage {...props} />}
-            ></Route>
-            <Route
-              path="/job"
-              render={(props) => <JobDetails {...props} />}
-            ></Route>
-            <Route
-              path="/profile"
-              render={(props) => <Profile {...props} />}
-            ></Route>
-          </Switch>
-        </div>
-      </Router>
+              </Route>
+              <Route
+                path="/dashboard"
+                render={(props) => <DashBoardPage {...props} />}
+              ></Route>
+              <Route
+                path="/job"
+                render={(props) => <JobDetails {...props} />}
+              ></Route>
+              <Route
+                path="/profile"
+                render={(props) => <Profile {...props} />}
+              ></Route>
+            </Switch>
+          </div>
+        </Router>
+      </Provider>
     );
   }
 }

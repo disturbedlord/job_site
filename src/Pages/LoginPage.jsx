@@ -4,7 +4,10 @@ import { Button, Form, Spinner } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
 import { Link, Redirect } from "react-router-dom";
-const request = require("request");
+import { connect } from "react-redux";
+import { saveUser } from "../actions/loggedInUserAction";
+import Http from "../Common/HttpCalls";
+import Constants from "../Common/Constants";
 
 class LoginPage extends React.Component {
   constructor(props) {
@@ -17,45 +20,42 @@ class LoginPage extends React.Component {
       showLoading: false,
       authToken: "",
       userData: null,
+      photo: null,
     };
   }
 
   LoginAccount = async () => {
     if (this.state.emailId !== "" && this.state.password !== "") {
       const { emailId, password } = this.state;
-      this.setState({ showLoading: true, serverResponseText: "" });
-      var options = {
-        method: "POST",
-        url: "http://localhost:3500/account/login",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          emailId: emailId,
-          password: password,
-        }),
+      const bodyData = {
+        emailId: emailId,
+        password: password,
       };
-      request(options, (error, response) => {
-        if (error) throw new Error(error);
-        const data = JSON.parse(response.body);
-        const status = parseInt(data.status);
-        console.log(data, data.status);
-        if (status) {
-          console.log(data.message);
-          this.setState({
-            accountExist: true,
+      this.setState({ showLoading: true, serverResponseText: "" });
+
+      Http.POST(Constants.URLS.Login, bodyData)
+        .then((res) => {
+          const data = res.data;
+          this.props.saveUser({
+            name: data.username,
+            emailId: data.emailId,
             authToken: data.token,
-            userData: data,
+            photo: data.photo,
           });
-        } else {
-          console.log(data.message);
-          this.setState({
-            accountExist: false,
-            showLoading: false,
-            serverResponseText: data.message,
-          });
-        }
-      });
+          const status = parseInt(data.status);
+          if (status) {
+            this.setState({
+              accountExist: true,
+            });
+          } else {
+            this.setState({
+              accountExist: false,
+              showLoading: false,
+              serverResponseText: data.message,
+            });
+          }
+        })
+        .catch((err) => console.log(err));
     } else {
       this.setState({
         showLoading: false,
@@ -68,16 +68,7 @@ class LoginPage extends React.Component {
     return (
       <div>
         {this.state.accountExist ? (
-          <Redirect
-            push
-            to={{
-              pathname: "/dashboard",
-              state: {
-                authToken: this.state.authToken,
-                userData: this.state.userData,
-              },
-            }}
-          />
+          <Redirect push to="/dashboard" />
         ) : (
           <div>
             <div>
@@ -211,4 +202,8 @@ const styles = {
   },
 };
 
-export default LoginPage;
+// const mapStateToProps = (state) => ({
+//   loggedInUser: state.loggedInUser.loggedInUser,
+// });
+
+export default connect(null, { saveUser })(LoginPage);

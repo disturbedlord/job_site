@@ -4,4 +4,12 @@ function Click(args) {
   element.contentEditable = true;
 }
 
-export { Click };
+function textAreaAdjust(ele) {
+  let element = document.getElementById(ele.target.id);
+  console.log("ele", element);
+  // element.style.display = "none";
+  element.style.height = "1px";
+  element.style.height = 25 + element.scrollHeight + "px";
+}
+
+export { Click, textAreaAdjust };

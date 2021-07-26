@@ -12,6 +12,7 @@ export default class AddDataCommonComponent extends React.Component {
           fontSize: "0.7rem",
           marginTop: "8px",
           cursor: "pointer",
+          marginBottom: "30px",
         }}
       >
         Add Data

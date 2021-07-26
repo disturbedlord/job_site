@@ -11,13 +11,20 @@ import {
   InputGroup,
 } from "react-bootstrap";
 import { Link } from "react-router-dom";
+import { connect } from "react-redux";
+import { getUser } from "../actions/loggedInUserAction";
 
-export default class NavBar extends React.Component {
+class NavBar extends React.Component {
   constructor(props) {
     super();
   }
 
+  componentDidMount() {
+    this.props.getUser();
+  }
+
   render() {
+    const { loggedInUser } = this.props;
     return (
       <div style={styles.navbar} className="nav_bar">
         <Row style={{ marginLeft: "3%", marginRight: "0" }}>
@@ -65,7 +72,7 @@ export default class NavBar extends React.Component {
                     fontWeight: "bolder",
                   }}
                 >
-                  Avinash k
+                  {loggedInUser.name}
                 </div>
                 <div
                   style={{
@@ -76,13 +83,13 @@ export default class NavBar extends React.Component {
                     color: "rgba(0,0,0,0.6)",
                   }}
                 >
-                  hari16999@gmail.com
+                  {loggedInUser.emailId}
                 </div>
               </div>
               <Link to="/profile">
                 <Image
                   style={{ marginLeft: "10px" }}
-                  src={avatar}
+                  src={loggedInUser.photo}
                   height="35rem"
                   width="35rem"
                   roundedCircle
@@ -120,3 +127,9 @@ const styles = {
     fontWeight: "600",
   },
 };
+
+const mapStateToProps = (state) => ({
+  loggedInUser: state.loggedInUser.loggedInUser,
+});
+
+export default connect(mapStateToProps, { getUser })(NavBar);

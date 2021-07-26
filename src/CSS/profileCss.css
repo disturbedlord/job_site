@@ -3,6 +3,10 @@
   /* background-color: green; */
 }
 
+#desc {
+  resize: none;
+}
+
 /* .editDiv:hover {
   background-color: rgb(138, 138, 138);
   opacity: 0.5;

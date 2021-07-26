@@ -3,8 +3,8 @@ import "../index.css";
 import { Button, Form, Spinner } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck, faCoffee } from "@fortawesome/free-solid-svg-icons";
-
-const request = require("request");
+import Http from "../Common/HttpCalls";
+import Constants from "../Common/Constants";
 
 class RegisterPage extends React.Component {
   constructor(props) {
@@ -50,41 +50,34 @@ class RegisterPage extends React.Component {
         registerBtnClicked: true,
         error: "",
       });
-      var options = {
-        method: "POST",
-        url: "http://localhost:3500/account/register",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          username: username,
-          emailId: emailId,
-          password: password,
-        }),
+
+      const bodyData = {
+        username: username,
+        emailId: emailId,
+        password: password,
       };
-      request(options, async (error, response) => {
-        if (error) throw new Error(error);
-        const data = JSON.parse(response.body);
-        const status = parseInt(data.status);
-        console.log(data, data.status);
-        if (status) {
-          console.log(data.message);
-          this.setState({
-            accountCreated: true,
-            registerBtnClicked: true,
-          });
-          await this.timeout(500);
-          this.setState({ showTimer: true });
-          console.log(this.state.showTimer);
-        } else {
-          console.log(data.message);
-          this.setState({
-            accountCreated: false,
-            registerBtnClicked: false,
-            error: data.message,
-          });
-        }
-      });
+
+      Http.POST(Constants.URLS.Register, bodyData)
+        .then((res) => {
+          const data = res.data;
+          const status = parseInt(data.status);
+          if (status) {
+            this.setState({
+              accountCreated: true,
+              registerBtnClicked: true,
+            });
+            this.timeout(500);
+            this.setState({ showTimer: true });
+            console.log(this.state.showTimer);
+          } else {
+            this.setState({
+              accountCreated: false,
+              registerBtnClicked: false,
+              error: data.message,
+            });
+          }
+        })
+        .catch((err) => console.log(err));
     } else {
       this.setState({
         registerBtnClicked: false,

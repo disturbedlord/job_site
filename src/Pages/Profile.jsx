@@ -17,6 +17,14 @@ import {
 import { Click } from "../common";
 import "../CSS/profileCss.css";
 import "../CSS/commonCss.css";
+import Constants from "../Common/Constants";
+import { textAreaAdjust } from "../common";
+import UserInputModal from "../Common/UserInputModal";
+import { experienceData } from "../Common/ProfileComponents/Experience";
+import { connect } from "react-redux";
+import { GET_USER } from "../actions/types";
+import PropTypes from "prop-types";
+import { getUser } from "../actions/loggedInUserAction";
 
 class Profile extends React.Component {
   constructor(props) {
@@ -25,9 +33,17 @@ class Profile extends React.Component {
       addPSClicked: false,
       addWEClicked: false,
       profiledata: [],
+      showModal: false,
     };
   }
+
+  componentDidMount() {
+    this.props.getUser();
+  }
+
   render() {
+    const { loggedInUser } = this.props;
+
     return (
       <div>
         <NavBar />
@@ -69,7 +85,7 @@ class Profile extends React.Component {
                   roundedCircle
                 />
                 <div className="boldText" style={{ marginTop: "20px" }}>
-                  Avinash Kumar E
+                  {loggedInUser.name}
                 </div>
                 <div
                   style={{
@@ -81,7 +97,7 @@ class Profile extends React.Component {
                   onClick={(e) => Click(e.target.id)}
                   className="profileCurrentJobClass"
                 >
-                  Associate Software Engineer
+                  Position
                 </div>
                 <div
                   style={{
@@ -92,7 +108,7 @@ class Profile extends React.Component {
                   }}
                   id="profileCurrentLocation"
                 >
-                  Pune , India
+                  City , Country
                 </div>
               </div>
               <div style={{ display: "flex", justifyContent: "center" }}>
@@ -104,39 +120,7 @@ class Profile extends React.Component {
                   }}
                 ></div>
               </div>
-              <div
-                style={{
-                  fontSize: "0.8rem",
-                  color: "rgba(0,0,0,0.6)",
-                  fontWeight: "bolder",
-                  marginTop: "20px",
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                }}
-              >
-                <FontAwesomeIcon
-                  style={{
-                    border: "3px solid rgba(46, 204, 113 , 0.3)",
-                    width: "30px",
-                    height: "100%",
-                    padding: "5px",
-                    borderRadius: "50px",
-                  }}
-                  icon={faEnvelope}
-                  size="1x"
-                />
-                <div style={{ marginTop: "10px" }}>hari16999@gmail.com</div>
-              </div>
-              <div style={{ display: "flex", justifyContent: "center" }}>
-                <div
-                  style={{
-                    marginTop: "15px",
-                    borderBottom: "1px solid rgba(0,0,0,0.1)",
-                    width: "30%",
-                  }}
-                ></div>
-              </div>
+
               <div style={{ marginTop: "20px" }}>
                 <div
                   style={{
@@ -222,9 +206,16 @@ class Profile extends React.Component {
                       backgroundColor: "rgba(46, 204, 113 , 0.2)",
                       cursor: "pointer",
                     }}
+                    onClick={() => this.setState({ showModal: true })}
                   >
                     Add Exp
                   </div>
+                  {this.state.showModal ? (
+                    <UserInputModal
+                      type="addExperience"
+                      closeModal={() => this.setState({ showModal: false })}
+                    />
+                  ) : null}
                   <div
                     style={{
                       ...commonStyle.tag,
@@ -239,12 +230,16 @@ class Profile extends React.Component {
                 </div>
               </div>
               {/* <AddDataCommonComponent /> */}
-              {!this.state.addWEClicked ? (
-                <AddDataCommonComponent
-                  click={() => this.setState({ addWEClicked: true })}
-                />
+              {this.state.profiledata.length == 0 ? (
+                <div
+                  style={{
+                    ...commonStyle.errorTag,
+                  }}
+                >
+                  No Data
+                </div>
               ) : (
-                <PlaceHolderWorkExperience />
+                <></>
               )}
 
               <div
@@ -327,125 +322,6 @@ class PlaceHolderProfessionalSummary extends React.Component {
   }
 }
 
-class PlaceHolderWorkExperience extends React.Component {
-  constructor(props) {
-    super();
-    this.state = {
-      companyImageSelected: false,
-      companyImage: null,
-      data: {},
-    };
-  }
-
-  companyImageUpload = (e) => {
-    var image = e.target.files[0];
-    var imageURL = URL.createObjectURL(image);
-    this.setState({ companyImage: imageURL, companyImageSelected: true });
-  };
-
-  render() {
-    return (
-      <div style={{ marginTop: "20px", marginBottom: "40px" }}>
-        <div>
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              justifyContent: "flex-start",
-            }}
-          >
-            <div
-              className="editDiv"
-              style={{
-                padding: "8px",
-                // backgroundColor: "blue",
-                borderRadius: "30px",
-                display: "table",
-                border: "3px solid rgba(250 , 10 , 1 , 0.5)",
-              }}
-            >
-              <form style={{ width: "100%" }}>
-                <input
-                  type="file"
-                  id="actual-btn"
-                  style={{ display: "none" }}
-                  onChange={this.companyImageUpload}
-                  accept=".png,.jpeg,.jpg,.svg"
-                />
-                {this.state.companyImageSelected ? (
-                  <label htmlFor="actual-btn" style={{ marginBottom: "0" }}>
-                    <img
-                      src={this.state.companyImage}
-                      width="25px"
-                      height="25px"
-                    />
-                  </label>
-                ) : (
-                  <label
-                    style={{
-                      fontSize: "0.7rem",
-                      width: "25px",
-                      height: "25px",
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      marginBottom: "0",
-                      cursor: "pointer",
-                    }}
-                    htmlFor="actual-btn"
-                    // className="btn btn-primary boldText"
-                  >
-                    Logo
-                  </label>
-                )}
-              </form>
-            </div>
-            <div style={{ marginLeft: "10px" }}>
-              <div
-                className="boldText"
-                style={{
-                  ...Styles.content,
-                  marginTop: "0",
-                  fontSize: "0.85rem",
-                }}
-                id="job"
-                contentEditable="true"
-              >
-                Position, Company Name
-              </div>
-              <div
-                className="boldText"
-                style={{
-                  ...Styles.content,
-                  marginTop: "0",
-                  fontSize: "0.75rem",
-                }}
-                onClick={(e) => Click("job")}
-                contentEditable="true"
-              >
-                From - To
-              </div>
-            </div>
-          </div>
-          <div style={{ ...Styles.content }} id="job" contentEditable="true">
-            - Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam
-            nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat
-            volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation
-            ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo
-            consequat.
-            <br /> - Duis autem vel eum iriure dolor in hendrerit in vulputate
-            velit esse molestie consequat, vel illum dolore eu feugiat nulla
-            facilisis at vero eros et accumsan et iusto odio dignissim qui
-            blandit praesent luptatum zzril delenit augue duis dolore te feugait
-            nulla facilisi. Epsum factorial non deposit quid pro quo hic
-            escorol. <br />- Souvlaki ignitus carborundum e pluribus unum.
-          </div>
-        </div>
-      </div>
-    );
-  }
-}
-
 const Styles = {
   content: {
     fontSize: "0.8rem",
@@ -455,4 +331,14 @@ const Styles = {
     // marginLeft: "20px",
   },
 };
-export default Profile;
+
+Profile.propTypes = {
+  loggedInUser: PropTypes.object.isRequired,
+  getUser: PropTypes.func.isRequired,
+};
+
+const mapStateToProps = (state) => ({
+  loggedInUser: state.loggedInUser.loggedInUser,
+});
+
+export default connect(mapStateToProps, { getUser })(Profile);
