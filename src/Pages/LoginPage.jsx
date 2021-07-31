@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
 import { Link, Redirect } from "react-router-dom";
 import { connect } from "react-redux";
-import { saveUser } from "../actions/loggedInUserAction";
+import { saveUser, getUser } from "../actions/loggedInUserAction";
 import Http from "../Common/HttpCalls";
 import Constants from "../Common/Constants";
 
@@ -22,6 +22,15 @@ class LoginPage extends React.Component {
       userData: null,
       photo: null,
     };
+  }
+
+  componentDidMount() {
+    const hasData = localStorage.getItem("hasData");
+    if (hasData === undefined || hasData === "0" || hasData === "") {
+      //do nothing
+    } else {
+      // Verify Token
+    }
   }
 
   LoginAccount = async () => {
@@ -42,6 +51,8 @@ class LoginPage extends React.Component {
             authToken: data.token,
             photo: data.photo,
           });
+          this.props.getUser();
+
           const status = parseInt(data.status);
           if (status) {
             this.setState({
@@ -65,10 +76,14 @@ class LoginPage extends React.Component {
   };
 
   render() {
+    const data = this.props.loggedInUser;
     return (
       <div>
         {this.state.accountExist ? (
-          <Redirect push to="/dashboard" />
+          <>
+            {console.log(data)}
+            <Redirect push to="/dashboard" />
+          </>
         ) : (
           <div>
             <div>
@@ -202,8 +217,8 @@ const styles = {
   },
 };
 
-// const mapStateToProps = (state) => ({
-//   loggedInUser: state.loggedInUser.loggedInUser,
-// });
+const mapStateToProps = (state) => ({
+  loggedInUser: state.loggedInUser.loggedInUser,
+});
 
-export default connect(null, { saveUser })(LoginPage);
+export default connect(mapStateToProps, { getUser, saveUser })(LoginPage);

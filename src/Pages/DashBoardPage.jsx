@@ -50,8 +50,9 @@ class DashBoardPage extends React.Component {
 
   componentDidMount(props) {
     this.props.getUser();
+    console.log("User: ", this.props);
     const authToken = this.props.loggedInUser.authToken;
-    console.log(authToken);
+    console.log("auth: ", authToken);
     if (authToken !== undefined || authToken !== "") {
       Http.GET(Constants.URLS.Dashboard, { "auth-token": authToken })
         .then((res) => {

@@ -4,6 +4,7 @@ const Http = {
     return axios.post(url, body, { headers: headers });
   },
   GET: (url, headers) => {
+    console.log(headers);
     return axios.get(url, { headers: headers });
   },
 };
